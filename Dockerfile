@@ -16,4 +16,4 @@ COPY --from=build /download ./
 RUN chmod +x ./sqlpackage
 RUN apk add --no-cache libstdc++ gcompat
 
-ENTRYPOINT [ "/bin/sh" ]
+CMD [ "/bin/bash" ]
