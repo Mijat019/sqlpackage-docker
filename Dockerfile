@@ -1,10 +1,19 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0
+FROM alpine as build
 
-RUN apt-get update && apt-get install unzip -y
+WORKDIR /download
 
-RUN mkdir sqlpackage
+RUN apk add --no-cache  wget unzip
+RUN wget https://aka.ms/sqlpackage-linux 
+RUN unzip sqlpackage-linux
+RUN rm -f sqlpackage-linux
 
-# Install SQLPackage for Linux and make it executable
-RUN wget -progress=bar:force -q -O sqlpackage.zip https://aka.ms/sqlpackage-linux \
-    && unzip -qq sqlpackage.zip -d /opt/sqlpackage \
-    && chmod +x /opt/sqlpackage/sqlpackage
+FROM alpine as run
+
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+
+WORKDIR /sqlpackage
+COPY --from=build /download ./
+RUN chmod +x ./sqlpackage
+RUN apk add --no-cache libstdc++ gcompat
+
+ENTRYPOINT [ "/bin/sh" ]
