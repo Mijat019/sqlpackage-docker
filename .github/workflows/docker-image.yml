@@ -14,9 +14,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    
     - name: Login
-      run: docker login -u loorky -p asdf hub.docker.com
+      run: docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD hub.docker.com
+      
     - name: Build the Docker image
       run: docker build . --tag loorky/sqlpackage:latest
+      
     - name: Publish image
       run: docker push loorky/sqlpackage:latest
