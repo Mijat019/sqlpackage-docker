@@ -1,0 +1,22 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Login
+      run: docker login -u loorky -p asdf hub.docker.com
+    - name: Build the Docker image
+      run: docker build . --tag loorky/sqlpackage:latest
+    - name: Publish image
+      run: docker push loorky/sqlpackage:latest
