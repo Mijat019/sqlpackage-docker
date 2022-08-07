@@ -1,19 +1,22 @@
-FROM alpine as build
+FROM debian:bullseye-slim as build
 
 WORKDIR /download
 
-RUN apk add --no-cache  wget unzip
+RUN apt-get update
+RUN apt-get install wget unzip -y
 RUN wget https://aka.ms/sqlpackage-linux 
 RUN unzip sqlpackage-linux
 RUN rm -f sqlpackage-linux
 
-FROM alpine as run
 
-ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+FROM debian:bullseye-slim as run
 
 WORKDIR /sqlpackage
+
 COPY --from=build /download ./
 RUN chmod +x ./sqlpackage
-RUN apk add --no-cache libstdc++ gcompat
+
+RUN apt-get update
+RUN apt-get install libicu-dev -y
 
 CMD [ "/bin/bash" ]
